@@ -121,6 +121,55 @@ public:
     vector<Aposta>& getApostas() { return apostas; }
 };
 
-int main(){
-    cout << "ok" << endl;
+int main() {
+    Sistema sistema;
+    string nome, cpf;
+    vector<int> numeros;
+    int opcao, numero, id = 1000;
+
+    while (true) {
+        cout << "1. Iniciar nova edição\n2. Registrar nova aposta\n3. Finalizar apostas e executar o sorteio\n4. Sair\n";
+        cin >> opcao;
+
+        switch (opcao) {
+            case 1:
+                sistema.iniciar();
+                break;
+            case 2:
+                cout << "Digite o nome: ";
+                cin >> nome;
+                cout << "Digite o CPF: ";
+                cin >> cpf;
+                cout << "Deseja escolher os números (1) ou usar a surpresinha (2)? ";
+                int escolha;
+                cin >> escolha;
+                if (escolha == 1) {
+                    cout << "Digite 5 números para a aposta: ";
+                    for (int i = 0; i < 5; i++) {
+                        cin >> numero;
+                        numeros.push_back(numero);
+                    }
+                } else if (escolha == 2) {
+                    random_device rd;
+                    mt19937 gen(rd());
+                    uniform_int_distribution<> dis(1, 50);
+                    for (int i = 0; i < 5; i++) {
+                        numeros.push_back(dis(gen));
+                    }
+                }
+                sistema.registrar_aposta(nome, cpf, numeros);
+                numeros.clear();
+                break;
+            case 3:
+                sistema.sortear_numeros();
+                sistema.apuracao();
+                break;
+            case 4:
+                return 0;
+            default:
+                cout << "Opção inválida\n";
+        }
+    }
+
+    return 0;
 }
