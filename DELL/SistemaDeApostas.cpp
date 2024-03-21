@@ -241,7 +241,7 @@ int main() {
                         }
                         soma += c - '0'; // Converte o caractere para um número e adiciona à soma
                     }
-                    if (soma % 11 != 0) { // Verifica se a soma dos dígitos é múltipla de 11
+                    if (soma % 11 != 0) { // Verifica se a soma dos dígitos é múltipla de 11, que é o caso de um cpf válido
                         cout << "\nCPF inválido. Tente novamente.\n";
                         continue;
                     }
