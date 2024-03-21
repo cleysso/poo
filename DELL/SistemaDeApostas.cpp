@@ -32,12 +32,14 @@ class Sistema {
 private:
     vector<Aposta> apostas;
     vector<int> sorteados;
+    vector<Aposta> vencedores;
     int id_atual = 1001;
 
 public:
     void iniciar() {
         apostas.clear();
         sorteados.clear();
+        vencedores.clear();
         id_atual = 1001;
     }
 
@@ -58,28 +60,28 @@ public:
         bool vencedor = false;
         int rodadas = 0;
 
-        while (!vencedor && rodadas < 25) {
+        while (getvencedores().size() == 0 && rodadas < 25) {
+            sortear_numeros();
             for (auto & aposta : getApostas()) {
                 vector<int> intersecao;
                 vector<int> numeros = aposta.getNumeros();
                 sort(numeros.begin(), numeros.end());
+                sort(sorteados.begin(), sorteados.end());
                 set_intersection(numeros.begin(), numeros.end(), sorteados.begin(), sorteados.end(), back_inserter(intersecao));
-
+    
                 if (intersecao.size() == 5) {
-                    cout << "Aposta vencedora: " << aposta.getId() << endl;
-                    vencedor = true;
-                    break;
+                    getvencedores().push_back(aposta);
                 }
             }
-
-            if (!vencedor) {
-                sortear_numeros();
-                rodadas++;
-            }
+            rodadas++;
         }
 
-        if (!vencedor) {
+        if (getvencedores().size() == 0) {
             cout << "Não houve vencedores." << endl;
+        } else {
+            for (auto & vencedor : getvencedores()) {
+            cout << "Aposta vencedora: " << vencedor.getId() << ", Nome: " << vencedor.getNome() << endl;
+            }
         }
 
         cout << "Números sorteados: ";
@@ -103,29 +105,13 @@ public:
         cout << "Rodadas de sorteio realizadas: " << sorteados.size()/5 << endl;
 
         // c. Quantidade de apostas vencedoras
-        int vencedores = 0;
-        for (auto & aposta : getApostas()) {
-            vector<int> intersecao;
-            vector<int> numeros = aposta.getNumeros();
-            sort(numeros.begin(), numeros.end());
-            set_intersection(numeros.begin(), numeros.end(), sorteados.begin(), sorteados.end(), back_inserter(intersecao));
-            if (intersecao.size() == 5) {
-                vencedores++;
-            }
-        }
-        cout << "Quantidade de apostas vencedoras: " << vencedores << endl;
+        cout << "Quantidade de apostas vencedoras: " << getvencedores().size() << endl;
 
         // d. Lista de apostas vencedoras
-        if (vencedores > 0) {
+        if (getvencedores().size() > 0) {
             cout << "Apostas vencedoras: " << endl;
-            for (auto & aposta : getApostas()) {
-                vector<int> intersecao;
-                vector<int> numeros = aposta.getNumeros();
-                sort(numeros.begin(), numeros.end());
-                set_intersection(numeros.begin(), numeros.end(), sorteados.begin(), sorteados.end(), back_inserter(intersecao));
-                if (intersecao.size() == 5) {
-                    cout << "ID: " << aposta.getId() << ", Nome: " << aposta.getNome() << endl;
-                }
+            for (auto & vencedor : getvencedores()) {
+                    cout << "ID: " << vencedor.getId() << ", Nome: " << vencedor.getNome() << endl;
             }
         } else {
             cout << "Não houve vencedores." << endl;
@@ -151,17 +137,6 @@ public:
     }
 
     void exibir_premiacao() {
-        vector<Aposta> vencedores;
-        for (auto & aposta : getApostas()) {
-            vector<int> intersecao;
-            vector<int> numeros = aposta.getNumeros();
-            sort(numeros.begin(), numeros.end());
-            set_intersection(numeros.begin(), numeros.end(), sorteados.begin(), sorteados.end(), back_inserter(intersecao));
-            if (intersecao.size() == 5) {
-                vencedores.push_back(aposta);
-            }
-        }
-    
         if (vencedores.empty()) {
             cout << "Não houve vencedores." << endl;
         } else {
@@ -175,6 +150,7 @@ public:
    
 
     vector<Aposta>& getApostas() { return apostas; }
+    vector<Aposta>& getvencedores() { return vencedores; }
 };
 
 int main() {
